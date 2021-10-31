@@ -5,6 +5,7 @@ import prologue/middlewares/staticfile
 import core/[middleware, events]
 import core/views as coreViews
 import ./users/views as usersViews
+import ./articles/views as articlesViews
 
 
 let
@@ -20,7 +21,7 @@ let
 
 echo env
 var app = newApp(settings = settings, startup = @[logEvent, createTablesEvent])
-app.use(jwtMiddleware(env.get("secretKey"), @["/api/users", "/api/users/login"]))
+app.use(jwtMiddleware(env.get("secretKey"), @["/openapi.json", "/docs", "/api/users", "/api/users/login"]))
 app.use(staticFileMiddleware(env.get("staticDir")))
 app.use(dbMiddleware())
 
@@ -34,5 +35,7 @@ app.addRoute("/api/users", usersViews.registerView, @[HttpPost])
 app.addRoute("/api/users/login", usersViews.loginView, @[HttpPost])
 app.addRoute("/api/user", usersViews.getUserView, @[HttpGet])
 app.addRoute("/api/user", usersViews.editUserView, @[HttpPut])
+
+app.addRoute("/api/articles", articlesViews.getArticlesView, @[HttpGet])
 
 app.run(DbContext)

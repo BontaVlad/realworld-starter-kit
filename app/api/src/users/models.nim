@@ -6,6 +6,15 @@ import allographer/query_builder
 import allographer/schema_builder
 
 
+type
+  User* = ref object
+    id*: int
+    email*: string
+    username*: string
+    password*: string
+    bio*: string
+    image*: string
+
 const t_user* = "user"
 
 
@@ -35,3 +44,10 @@ proc getUser*[T](rdb: Rdb, value: T, by="id",
   result = await rdb.table(t_user)
     .select(col)
     .find(value, by)
+
+
+proc getUserObj*[T](rdb: Rdb, value: T, by="id", model=User): Future[Option[User]] {.async.} =
+  result = await(rdb.table(t_user)
+                 .select()
+                 .find(value, by))
+                 .orm(User)

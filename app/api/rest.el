@@ -48,6 +48,6 @@ Authorization: :token
 
 
 # get not found
-GET :domain/article
+GET :domain/articles
 Content-Type: application/json
 Authorization: :token
