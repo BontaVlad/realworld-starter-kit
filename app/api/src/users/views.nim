@@ -5,6 +5,8 @@ import jsony
 
 import ../core/[auth, middleware]
 import ../core/views
+import ../core/orm/query
+import ../core/orm/model
 import allographer/query_builder
 import models
 
@@ -30,7 +32,7 @@ proc registerView*(ctx: Context) {.async.} =
   user["bio"] = newJString("")
   user["image"] = newJString("")
 
-  user["id"] = newJInt(await ctx.db.table(t_user).insertId(user))
+  user["id"] = newJInt(await ctx.db.table(User.name).insertId(user))
   user["token"] = newJString(sign(user))
   user.delete("password")
   user["token"] = newJString(sign(user))
@@ -43,51 +45,56 @@ proc loginView*(ctx: Context) {.async.} =
   let
     input = parseJson(ctx.request.body)["user"]
 
-  var user = await ctx.db.getUser(input["email"].getStr, by="email")
+  var user: User = await ctx.db.find[User](value=input["email"].getStr, by="email")
+  # echo ctx.db.foo(value=input["email"].getStr, by="email")
 
-  if not user.isSome:
-    jerror "Incorrect email or password", Http404
-    return
+  # if not user.isSome:
+  #   jerror "Incorrect email or password", Http404
+  #   return
 
-  let password = user.get()["password"].getStr
-  user.get().delete("password")
-  let token = authenticate(input["password"].getStr, password, payload=user.get())
-  if not token.isSome:
-    jerror "Incorrect email or password", Http404
-    return
+  # let password = user.get()["password"].getStr
+  # user.get().delete("password")
+  # let token = authenticate(input["password"].getStr, password, payload=user.get())
+  # if not token.isSome:
+  #   jerror "Incorrect email or password", Http404
+  #   return
 
-  user.get()["token"] = newJString(token.get)
-  user.get().delete("id")
-  jresp %*{"user": user.get()}, Http200
+  # user.get()["token"] = newJString(token.get)
+  # user.get().delete("id")
+  # jresp %*{"user": user.get()}, Http200
+  jresp %*{"user": "user"}, Http200
 
 
 proc getUserView*(ctx: Context) {.async.} =
-  let
-    ctx = DbContext(ctx)
-    id = parseJson(ctx.ctxData["payload"])["id"].getInt
+  # let
+  #   ctx = DbContext(ctx)
+  #   id = parseJson(ctx.ctxData["payload"])["id"].getInt
 
-  var user = await ctx.db.getUser(id, exclude= @["password"])
-  if not user.isSome:
-    jerror "User not found", Http404
-  else:
-    user.get["token"] = newJString(sign(user.get))
-    user.get.delete("id")
-    jresp %*{"user": user.get}, Http200
+  # var user = await ctx.db.find(User, id, exclude= @["password"])
+  # if not user.isSome:
+  #   jerror "User not found", Http404
+  # else:
+  #   user.get["token"] = newJString(sign(user.get))
+  #   user.get.delete("id")
+  #   jresp %*{"user": user.get}, Http200
+
+  jresp %*{"user": "user"}, Http200
 
 
 proc editUserView*(ctx: Context) {.async.} =
-  let
-    ctx = DbContext(ctx)
-    input = parseJson(ctx.request.body)["user"]
-    payload = parseJson(ctx.ctxData["payload"])
-    id = payload["id"].getInt
+  # let
+  #   ctx = DbContext(ctx)
+  #   input = parseJson(ctx.request.body)["user"]
+  #   payload = parseJson(ctx.ctxData["payload"])
+  #   id = payload["id"].getInt
 
-  await ctx.db.table(t_user).where("id", "=", id).update(input)
+  # await ctx.db.table(User.table).where("id", "=", id).update(input)
 
-  var user = await ctx.db.getUser(id, exclude= @["password"])
-  if not user.isSome:
-    jerror "User not found", Http404
-  else:
-    user.get["token"] = newJString(sign(user.get))
-    user.get.delete("id")
-    jresp %*{"user": user.get}, Http200
+  # var user = await ctx.db.find(User, id, exclude= @["password"])
+  # if not user.isSome:
+  #   jerror "User not found", Http404
+  # else:
+  #   user.get["token"] = newJString(sign(user.get))
+  #   user.get.delete("id")
+  #   jresp %*{"user": user.get}, Http200
+  jresp %*{"user": "user"}, Http200

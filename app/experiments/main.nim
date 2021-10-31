@@ -1,40 +1,44 @@
-import std/[macros]
-# import std/typeinfo
-import print
-
+import std/[macros, strutils]
 
 
 template tName*(val: string) {.pragma.}
 
 type
-  Model = ref object of RootObj
-
-type
-  User* {.tName: "user".} = ref object of Model
+  Model* = ref object of RootObj
+  User* = ref object of Model
     id*: int
     email*: string
     username*: string
 
 
-func table*(T: typedesc[Model]): string =
-  '"' & $T & '"'
+proc newUser(id=1, email="foo-email", username="foo-username"): User =
+  User(id: id, email: email, username: username)
+# var obj = User(id: 1, email: "email-value", username: "username-value")
 
-
-var obj = User(id: 1, email: "email-value", username: "username-value")
-
-# for name, value in fields(obj):
-#   echo name
-#   echo value
-  # print tp
-# for fld, name in obj[].fieldPairs:
+# for fld, val in obj[].fieldPairs:
 #   print fld
-#   echo typeof(fld)
-#   echo name
-#   # print val
+#   print val
 #
-# echo obj.table
+# for fld, val in User()[].fieldPairs:
+#   print fld
+#   print val
+#
+func name*(T: typedesc[Model]): string =
+  when T.hasCustomPragma(tName):
+    result = T.getCustomPragmaVal(tName)
+  else:
+    '"' & toLowerAscii($typedesc(T)) & '"'
 
-echo typeof(obj).table
-when obj.hasCustomPragma(tName):
-  echo "Has custom pragma"
-  echo obj.getCustomPragmaVal(tName)
+
+# func cols*(T: typedesc[Model]): seq[string] =
+# proc cols*(T: User) =
+#   echo T.name
+#   for fld, name in T[].fieldPairs:
+#     echo name
+    # result add $name
+
+for fld, name in User()[].fieldPairs:
+  echo fld
+  # echo name
+
+# obj.cols
