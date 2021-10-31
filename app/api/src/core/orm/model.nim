@@ -1,5 +1,6 @@
-# stolen from https://github.com/moigagoo/norm/blob/develop/src/norm/model.nim
 import std/[macros, options, strutils]
+
+import allographer/schema_builder
 
 
 import pragmas
@@ -17,3 +18,17 @@ func name*(T: typedesc[Model]): string =
 func cols*(T: typedesc[Model]): seq[string] =
   for fld, val in T()[].fieldPairs:
     result.add fld
+
+
+proc schema(T: typedesc[Model]) =
+  # db.schema([
+  #   table(t_user, [
+  #     Column().increments("id"),
+  #     Column().string("email"),
+  #     Column().string("username"),
+  #     Column().string("password"),
+  #     Column().string("bio"),
+  #     Column().string("image")
+  #   ])
+  # ])
+  result = @[table(T.name, [])]

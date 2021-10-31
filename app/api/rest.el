@@ -41,7 +41,7 @@ Authorization: :token
 {
   "user": {
     "username": "changed2",
-    "bio": "new bio",
+    "bio": "new bio changed",
     "image": "new image"
   }
 }
