@@ -9,26 +9,12 @@ import pragmas
 type
   Model* = ref object of RootObj
 
-func name*(T: typedesc[Model]): string =
-  when T.hasCustomPragma(tName):
-    result = T.getCustomPragmaVal(tName)
+func name*(model: typedesc[Model]): string =
+  when model.hasCustomPragma(tName):
+    result = model.getCustomPragmaVal(tName)
   else:
-    '"' & toLowerAscii($typedesc(T)) & '"'
+    toLowerAscii($typedesc(model))
 
-func cols*(T: typedesc[Model]): seq[string] =
-  for fld, val in T()[].fieldPairs:
+func cols*(model: typedesc[Model]): seq[string] =
+  for fld, val in model()[].fieldPairs:
     result.add fld
-
-
-proc schema(T: typedesc[Model]) =
-  # db.schema([
-  #   table(t_user, [
-  #     Column().increments("id"),
-  #     Column().string("email"),
-  #     Column().string("username"),
-  #     Column().string("password"),
-  #     Column().string("bio"),
-  #     Column().string("image")
-  #   ])
-  # ])
-  result = @[table(T.name, [])]

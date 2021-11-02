@@ -15,9 +15,7 @@ proc getArticlesView*(ctx: Context) {.async.} =
       "title": "string",
       "description": "string",
       "body": "string",
-      "tagList": [
-        "string"
-      ],
+      "tagList": ["string", "string"],
       "createdAt": "2021-10-29T14:36:11.354Z",
       "updatedAt": "2021-10-29T14:36:11.354Z",
       "favorited": true,

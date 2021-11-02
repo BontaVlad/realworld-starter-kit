@@ -25,6 +25,10 @@ task debug, "Builds a debug version":
   echo("\nDebug Build\n")
   exec("nimble c --verbose -d:debug --lineDir:on --debuginfo --debugger:native src/api --outdir:./bin")
 
+task migrate, "Builds a debug version":
+  echo("\nCreating migrations, migrating\n")
+  exec("nim c -r -d:reset src/core/migrate --outdir:./bin")
+
 # pre runner for 'exec' to first carry out a 'debug' task build above
 before exec:
   exec("nimble debug")

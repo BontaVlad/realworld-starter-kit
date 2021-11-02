@@ -16,11 +16,10 @@ let
     port = Port(env.getOrDefault("port", 8080)),
     secretKey = env.getOrDefault("secretKey", ""))
   logEvent = initEvent(setLoggingLevel)
-  createTablesEvent = initEvent(createDatabaseTables)
 
 
 echo env
-var app = newApp(settings = settings, startup = @[logEvent, createTablesEvent])
+var app = newApp(settings = settings, startup = @[logEvent])
 app.use(jwtMiddleware(env.get("secretKey"), @["/openapi.json", "/docs", "/api/users", "/api/users/login"]))
 app.use(staticFileMiddleware(env.get("staticDir")))
 app.use(dbMiddleware())

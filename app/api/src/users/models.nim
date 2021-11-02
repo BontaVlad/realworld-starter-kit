@@ -1,3 +1,6 @@
+import allographer/schema_builder
+import allographer/query_builder
+
 import ../core/orm/model
 
 
@@ -11,20 +14,15 @@ type
     image*: string
 
 
-proc createUserTables*() =
-  discard
-  # let
-  #   env = loadPrologueEnv(".env")
-  #   dbUrl = env.getOrDefault("databaseUrl", "real.db")
-  #   db = dbOpen(Sqlite3, dbUrl, shouldDisplayLog=true)
-
-  # db.schema([
-  #   table(t_user, [
-  #     Column().increments("id"),
-  #     Column().string("email"),
-  #     Column().string("username"),
-  #     Column().string("password"),
-  #     Column().string("bio"),
-  #     Column().string("image")
-  #   ])
-  # ])
+template createUserSchema*(db: typed) {.dirty.} =
+  echo "Generating user schema"
+  db.schema([
+    table(User.name, [
+      Column().increments("id"),
+      Column().string("email"),
+      Column().string("username"),
+      Column().string("password"),
+      Column().string("bio"),
+      Column().string("image")
+    ])
+  ])
